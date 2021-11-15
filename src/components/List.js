@@ -35,11 +35,9 @@ class List extends Component{
 
     render() {
         return (
-            <div className={"container-fluid mt-5"}>
+            <div className={"container-fluid mt-2"}>
                 <div className="row">
-                    <h1 className={"text-center mb-4"}>Annuaire des entreprises</h1>
                     <ListForm onSearchLaunch={this.handleSearchLaunch} loadingState={this.state.searchLoading}/>
-                    {(this.state.currentResult == null) && <p className={"text-primary text-center fs-4"}>Retrouvez toutes les informations publiques concernant les entreprises françaises</p>}
                 </div>
                 {(this.state.currentResult != null) && <ResultsList currentResult={this.state.currentResult} currentSearch={this.state.currentSearch}/>}
             </div>
