@@ -1,88 +1,72 @@
-import {Component, useEffect, useState} from "react";
+import {Component} from "react";
 import ListForm from "./ListFrom";
-import * as assert from "assert";
 
 class List extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            currentSearch: "",
-            isResult: false
+            currentSearch: null,
+            currentResult: null,
+            searchLoading: false,
+            searchError: null,
         }
     }
 
-
-    //change the currentSeach value on listFrom component change
-    handleSearchChange = (text) => {
-        if (text !== ""){
-            this.setState({
-                currentSearch: text,
-                isResult: true
-            })
-        }
+    handleSearchLaunch = (searchText) => {
+        (
+            async () => {
+                this.setState({...this.state, searchLoading: true, searchError: null})
+                try{
+                    const response = await fetch(`https://entreprise.data.gouv.fr/api/sirene/v1/full_text/${searchText}?per_page=10&page=1`)
+                    const responseData = await response.json()
+                    this.setState({currentSearch: searchText, currentResult: responseData, searchLoading: false, searchError: null})
+                } catch (error) {
+                    console.log(error)
+                    this.setState({currentSearch: searchText, currentResult: null, searchLoading: false, searchError: error})
+                }
+            }
+        )()
     }
 
     render() {
         return (
             <div className={"container-fluid mt-5"}>
-                <h1 className={"text-center mb-4"}>Annuaire des entreprises</h1>
-                <ListForm onSearchChange={this.handleSearchChange}/>
-                {!this.state.isResult && <p className={"text-primary text-center fs-4"}>Retrouvez toutes les informations publiques concernant les entreprises françaises</p>}
-                {this.state.isResult && <ListResults currentSearch={this.state.currentSearch}/>}
+                <div className="row">
+                    <h1 className={"text-center mb-4"}>Annuaire des entreprises</h1>
+                    <ListForm onSearchLaunch={this.handleSearchLaunch} loadingState={this.state.searchLoading}/>
+                    {(this.state.currentResult == null) && <p className={"text-primary text-center fs-4"}>Retrouvez toutes les informations publiques concernant les entreprises françaises</p>}
+                </div>
+                {(this.state.currentResult != null) && <ResultsList currentResult={this.state.currentResult} currentSearch={this.state.currentSearch}/>}
             </div>
         );
     }
 }
 
-const useFetch = url => {
-    //init a state with result, loading and error status
-    const [state, setState] = useState({
-        result: null,
-        loading: true,
-        error: false
-    })
-
-    useEffect(() => {
-        (
-            async () => {
-                const response = await fetch(url)
-                if (response.ok){
-                    const responseData = await response.json()
-                    setState({
-                        result: responseData,
-                        loading: false,
-                        error: false,
-                    })
-                } else {
-                    console.log(response.error)
-                    setState({
-                        result: response.error,
-                        loading: false,
-                        error: true,
+const ResultsList = (props) => {
+    const {total_results, total_pages, per_page, page, etablissement} = props.currentResult
+    const currentSearch = props.currentSearch
+    return (
+        <div className="container-fluid result-list">
+            <div className="row">
+                <p>{total_results} {(total_results > 1) ? "résultats trouvés" : "résultat touvé"} pour "{currentSearch}"</p>
+            </div>
+            <div className="row list">
+                {
+                    etablissement.map(item => {
+                        return(
+                            <div className="card border-0 rounded-2 bg-light my-1">
+                                <div className="card-body">
+                                    <h5 className="card-title">{item.nom_raison_sociale}</h5>
+                                    <p className="card-text">{item.libelle_activite_principale}</p>
+                                    <a href="/" className="btn btn-primary">Voir plus</a>
+                                </div>
+                            </div>
+                        )
                     })
                 }
-            }
-        )()
-
-    }, [url])
-
-    return([state.result, state.loading, state.error])
-}
-
-const ListResults = (props) => {
-    const currentSearch = props.currentSearch.toLowerCase();
-
-    //Get results from useFecth custom hook
-    const [result, loading, error] = useFetch(`https://entreprise.data.gouv.fr/api/sirene/v1/full_text/${currentSearch}?per_page=10&page=1`)
-    console.log(`Loading state: ${loading}`)
-    console.log(result)
-    console.log(`Error state: ${error}`)
-    return(
-        <div className="row">
-            {loading && <div>Chargement...</div>}
-            <div></div>
+            </div>
         </div>
-    )
+    );
 }
 
 export default List

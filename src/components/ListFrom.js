@@ -1,20 +1,19 @@
 import {useState} from "react";
 
 const ListForm = (props) => {
-    const {onSearchChange} = props
+    const {onSearchLaunch, loadingState} = props
     const [searchText, setSearchText] = useState("")
 
-    const launchSearch = (e) => {
-        e.preventDefault()
+    const launchSearch = (event) => {
+        event.preventDefault()
         if (searchText !== ""){
-            console.log(searchText)
-            onSearchChange(searchText)
+            onSearchLaunch(searchText.toLowerCase())
         }
     }
 
-    const handleSearchTexteChange = e => {
-        if (e.target.value !== null){
-            setSearchText(e.target.value)
+    const handleSearchTexteChange = event => {
+        if (event.target.value !== null){
+            setSearchText(event.target.value)
         }
     }
 
@@ -24,7 +23,13 @@ const ListForm = (props) => {
                 <input type="search" className="form-control" id="searchText" placeholder="Entrez un nom, un siret ou un siren" value={searchText} onChange={handleSearchTexteChange}/>
             </div>
             <div className="col-2">
-                <button className="btn btn-primary mb-3 w-100" onClick={launchSearch}>Lancer</button>
+                {loadingState && <button className="btn btn-primary w-100" disabled type="button">
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"/>
+                    <span className={"d-sm-none"}>Recherche en cours</span>
+                </button>}
+                {!loadingState && <button className="btn btn-primary w-100" type="button" onClick={launchSearch}>
+                    Lancer
+                </button>}
             </div>
         </form>
     )
