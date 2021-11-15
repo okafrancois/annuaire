@@ -1,5 +1,6 @@
 import {Component} from "react";
 import ListForm from "./ListFrom";
+import ResultsList from "./ResultList";
 
 class List extends Component{
     constructor(props) {
@@ -13,15 +14,19 @@ class List extends Component{
     }
 
     handleSearchLaunch = (searchText) => {
+        //using an auto called function to handle async function
         (
             async () => {
+                //set loading state
                 this.setState({...this.state, searchLoading: true, searchError: null})
                 try{
+                    //get response from api call
                     const response = await fetch(`https://entreprise.data.gouv.fr/api/sirene/v1/full_text/${searchText}?per_page=10&page=1`)
                     const responseData = await response.json()
+                    //set result in with response datas and disable loading state
                     this.setState({currentSearch: searchText, currentResult: responseData, searchLoading: false, searchError: null})
                 } catch (error) {
-                    console.log(error)
+                    // set error data and disable loading state
                     this.setState({currentSearch: searchText, currentResult: null, searchLoading: false, searchError: error})
                 }
             }
@@ -40,33 +45,6 @@ class List extends Component{
             </div>
         );
     }
-}
-
-const ResultsList = (props) => {
-    const {total_results, total_pages, per_page, page, etablissement} = props.currentResult
-    const currentSearch = props.currentSearch
-    return (
-        <div className="container-fluid result-list">
-            <div className="row">
-                <p>{total_results} {(total_results > 1) ? "résultats trouvés" : "résultat touvé"} pour "{currentSearch}"</p>
-            </div>
-            <div className="row list">
-                {
-                    etablissement.map(item => {
-                        return(
-                            <div className="card border-0 rounded-2 bg-light my-1">
-                                <div className="card-body">
-                                    <h5 className="card-title">{item.nom_raison_sociale}</h5>
-                                    <p className="card-text">{item.libelle_activite_principale}</p>
-                                    <a href="/" className="btn btn-primary">Voir plus</a>
-                                </div>
-                            </div>
-                        )
-                    })
-                }
-            </div>
-        </div>
-    );
 }
 
 export default List
