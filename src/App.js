@@ -1,6 +1,7 @@
 import {Link, Route, Routes} from "react-router-dom";
 import Home from "./Home";
 import ResultsPage from "./ResultsPage";
+import {SingleResult} from "./SingleResult";
 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="resultats/:searchText/:currentPage" element={<ResultsPage />} />
+                    <Route path="entreprise/:searchSiren" element={<SingleResult />} />
                     <Route path="*" element={<NotFoundPage/>}/>
                 </Routes>
             </main>

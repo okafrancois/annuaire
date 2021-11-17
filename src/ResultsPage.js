@@ -61,7 +61,7 @@ const ResultsPage = () => {
                         <div className="row">
                             {
                                 state.result.etablissement.map(item => (
-                                    <ResultItem key={item.id} nom={item.nom_raison_sociale} activitePrincipale={item.libelle_activite_principale}/>
+                                    <ResultItem key={item.id} nom={item.nom_raison_sociale} activitePrincipale={item.libelle_activite_principale} siren={item.siren}/>
                                 ))
                             }
                         </div>

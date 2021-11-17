@@ -1,5 +1,5 @@
-.App {
-  min-height: calc(100vh - 60px);
+main {
+  min-height: calc(100vh - 100px);
 }
 
 a {
@@ -12,6 +12,10 @@ a:hover {
 
 .custom-shadow {
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.item-details {
+  min-height: 400px;
 }
 
 /*# sourceMappingURL=index.css.map */

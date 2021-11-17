@@ -1,1 +1,1 @@
-{"version":3,"sourceRoot":"","sources":["sass/_App.scss","sass/_result-item.scss"],"names":[],"mappings":"AAAA;EACE;;;AAGF;EACE;EACA;;AACA;EACE;;;ACRJ;EACE","file":"index.css"}
+{"version":3,"sourceRoot":"","sources":["sass/_App.scss","sass/_result-item.scss","sass/_single-result.scss"],"names":[],"mappings":"AAAA;EACE;;;AAGF;EACE;EACA;;AACA;EACE;;;ACRJ;EACE;;;ACDF;EACE","file":"index.css"}
