@@ -2,6 +2,7 @@ import {useParams} from "react-router-dom";
 import SearchForm from "./components/SearchForm";
 import {useEffect, useState} from "react";
 import {CardList} from "./components/CardList";
+import {Paginations} from "./components/Paginations";
 
 const ResultsPage = () => {
     const [state, setState] = useState({loading: true, error: false, result: null})
@@ -10,6 +11,7 @@ const ResultsPage = () => {
     useEffect(() => {
         (
             async () => {
+                // @TODO handle 404 status in fetch request
                 //set loading state
                 setState(state => ({...state ,loading: true, error: false}))
                 try{
@@ -44,7 +46,14 @@ const ResultsPage = () => {
                 </div>}
 
                 {//display result items only if there's a result that isn't an error and if the page is not loading
-                    (state.result != null && !state.loading && !state.error) && <CardList result={state.result} currentSearch={searchText} currentPage={currentPage}/>}
+                    (state.result != null && !state.loading && !state.error) && <div className="container mt-3">
+                        <h2>{state.result.total_results} {(state.result.total_results > 1) ? "résultats trouvés" : "résultat touvé"} pour "{searchText}"</h2>
+                        {(state.result.total_results > 1000) && <p className={"alert-warning p-1 rounded-1"}>😳 Ça fait beaucoup là. Essayez d'affiner votre recherche pour un résultat précis.</p>}
+                        <div className="row">
+                            <CardList result={state.result}/>
+                        </div>
+                        {(state.result.total_pages >= 1) && <Paginations totalPages={state.result.total_pages} currentSearch={searchText} currentPage={currentPage}/>}
+                    </div>}
             </div>
         </div>
     )

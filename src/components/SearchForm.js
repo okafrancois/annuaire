@@ -11,7 +11,11 @@ const SearchForm = (props) => {
     }
 
     return(
-        <form className={"row"} onSubmit={() => navigate(`/resultats/${state}/1`)}>
+        <form className={"row"} onSubmit={(event) => {
+            //prevent the submit event from triggering the page reload
+            event.preventDefault()
+            ; navigate(`/resultats/${state}/1`)}
+        }>
             <div className="col-sm-12 col-md-9 my-1">
                 <input type="search" className="form-control" id="searchText" placeholder="Entrez un nom, un siret ou un siren" value={state} onChange={handleTextChange}/>
             </div>
