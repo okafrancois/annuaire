@@ -3,8 +3,8 @@ import {useState} from "react";
 
 const SearchForm = (props) => {
     const navigate = useNavigate()
-    const [state, setState] = useState(props.currentSearch)
-    const loadingState = props.loadindState
+    const [state, setState] = useState(props.currentSearch || "")
+    const loadingState = props.loadindState || false
 
     const handleTextChange = event => {
         setState(event.target.value)

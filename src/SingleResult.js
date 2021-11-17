@@ -5,9 +5,9 @@ import {Paginations} from "./components/Paginations";
 import {ResultItem} from "./components/ResultItem";
 import {Loader} from "./components/Loader";
 
-const ResultsPage = () => {
+export const SingleResult = () => {
     const [state, setState] = useState({loading: true, error: false, result: null, nothingFound: false})
-    const {searchText, currentPage} = useParams();
+    const {searchText} = useParams();
 
     useEffect(() => {
         (
@@ -16,7 +16,7 @@ const ResultsPage = () => {
                 setState(state => ({...state ,loading: true, error: false}))
                 try{
                     //get response from api call
-                    const response = await fetch(`https://entreprise.data.gouv.fr/api/sirene/v1/full_text/${searchText}?per_page=12&page=${currentPage}`)
+                    const response = await fetch(`https://entreprise.data.gouv.fr/api/sirene/v1/siren/${searchText}`)
                     if (response.ok && response.status !== 404){
                         const responseData = await response.json()
                         //set result state with response datas and disable loading state
@@ -35,7 +35,7 @@ const ResultsPage = () => {
                 }
             }
         )()
-    }, [currentPage, searchText])
+    }, [searchText])
 
     return (
         <div className={"row mt-2"}>
@@ -44,32 +44,12 @@ const ResultsPage = () => {
             <div className="row">
                 {//display if there's an error
                     state.error && <div className="col-12 py-3">
-                    <p className="text-danger">Oops, il y a eu une erreur. Essayez de relancer la recherche ou vérifiez votre connexion</p>
-                </div>}
-
-                {//display result items only if there's a result that isn't an error and if the page is not loading
-                    state.nothingFound && <p className={"text-center py-3"}>🤔 Nous n'avons rien trouvé qui ressemble à "{searchText}". Vérifiez l'orthographe ou changez de recherche.</p>
-                }
+                        <p className="text-danger">Oops, il y a eu une erreur. Essayez de relancer la recherche ou vérifiez votre connexion</p>
+                    </div>}
 
                 {//display if the page is loading
                     state.loading && <Loader/>}
-
-                {//display result items only if there's a result that isn't an error and if the page is not loading
-                    (state.result != null && !state.loading && !state.error) && <div className="container mt-3">
-                        <h2>{state.result.total_results} {(state.result.total_results > 1) ? "résultats trouvés" : "résultat touvé"} pour "{searchText}"</h2>
-                        {(state.result.total_results > 1000) && <p className={"alert-warning p-1 rounded-1"}>😳 Ça fait beaucoup là. Essayez d'affiner votre recherche pour un résultat précis.</p>}
-                        <div className="row">
-                            {
-                                state.result.etablissement.map(item => (
-                                    <ResultItem key={item.id} nom={item.nom_raison_sociale} activitePrincipale={item.libelle_activite_principale}/>
-                                ))
-                            }
-                        </div>
-                        {(state.result.total_pages >= 1) && <Paginations totalPages={state.result.total_pages} currentSearch={searchText} currentPage={currentPage}/>}
-                    </div>}
             </div>
         </div>
     )
 }
-
-export default ResultsPage
