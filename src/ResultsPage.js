@@ -1,8 +1,8 @@
 import {useParams} from "react-router-dom";
 import SearchForm from "./components/SearchForm";
 import {useEffect, useState} from "react";
-import {CardList} from "./components/CardList";
 import {Paginations} from "./components/Paginations";
+import {ResultItem} from "./components/ResultItem";
 
 const ResultsPage = () => {
     const [state, setState] = useState({loading: true, error: false, result: null, nothingFound: false})
@@ -61,7 +61,11 @@ const ResultsPage = () => {
                         <h2>{state.result.total_results} {(state.result.total_results > 1) ? "résultats trouvés" : "résultat touvé"} pour "{searchText}"</h2>
                         {(state.result.total_results > 1000) && <p className={"alert-warning p-1 rounded-1"}>😳 Ça fait beaucoup là. Essayez d'affiner votre recherche pour un résultat précis.</p>}
                         <div className="row">
-                            <CardList result={state.result}/>
+                            {
+                                state.result.etablissement.map(item => (
+                                    <ResultItem key={item.id} nom={item.nom_raison_sociale} activitePrincipale={item.libelle_activite_principale}/>
+                                ))
+                            }
                         </div>
                         {(state.result.total_pages >= 1) && <Paginations totalPages={state.result.total_pages} currentSearch={searchText} currentPage={currentPage}/>}
                     </div>}
