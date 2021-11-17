@@ -16,10 +16,10 @@ const SearchForm = (props) => {
             event.preventDefault()
             ; navigate(`/resultats/${state}/1`)}
         }>
-            <div className="col-sm-12 col-md-9 my-1">
+            <div className="col-sm-12 col-md-9 my-1 ps-0">
                 <input type="search" className="form-control" id="searchText" placeholder="Entrez un nom, un siret ou un siren" value={state} onChange={handleTextChange}/>
             </div>
-            <div className="col-sm-12 col-md-3 my-1">
+            <div className="col-sm-12 col-md-3 my-1 pe-0">
                 {loadingState && <button className="btn btn-primary w-100" disabled type="button">
                     <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"/>
                     <span className={"d-sm-none"}>Recherche en cours</span>

@@ -20,7 +20,7 @@ export const Paginations = (props) => {
 
     return(
         <nav className={"row my-3"}>
-            <ul className="pagination">
+            <ul className="pagination flex-wrap justify-content-center">
                 <li className={`page-item ${currentPage - 1 === 0 ? "disabled" : "" }`}>
                     <button className="page-link" onClick={() => navigate(`/resultats/${currentSearch}/${(currentPage * 1) - 1}`)}>Précédent</button>
                 </li>

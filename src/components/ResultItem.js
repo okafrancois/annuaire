@@ -1,5 +1,3 @@
-import "../styles/card-list.css"
-
 export const ResultItem = (props) => {
     const {nom, activitePrincipale} = props
 
