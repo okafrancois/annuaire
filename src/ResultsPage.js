@@ -5,25 +5,32 @@ import {CardList} from "./components/CardList";
 import {Paginations} from "./components/Paginations";
 
 const ResultsPage = () => {
-    const [state, setState] = useState({loading: true, error: false, result: null})
+    const [state, setState] = useState({loading: true, error: false, result: null, nothingFound: false})
     const {searchText, currentPage} = useParams();
 
     useEffect(() => {
         (
             async () => {
-                // @TODO handle 404 status in fetch request
                 //set loading state
                 setState(state => ({...state ,loading: true, error: false}))
                 try{
                     //get response from api call
                     const response = await fetch(`https://entreprise.data.gouv.fr/api/sirene/v1/full_text/${searchText}?per_page=10&page=${currentPage}`)
-                    const responseData = await response.json()
-                    //set result state with response datas and disable loading state
-                    setState(state => ({...state ,loading: false, error: false, result: responseData}))
+                    if (response.ok && response.status !== 404){
+                        const responseData = await response.json()
+                        //set result state with response datas and disable loading state
+                        setState(state => ({...state ,loading: false, error: false, result: responseData, nothingFound: false}))
+                    }
+                    if (response.status === 404){
+                        const responseData = await response.json()
+                        console.error(responseData)
+                        //set result state with response datas and disable loading state
+                        setState(state => ({...state ,loading: false, error: false, result: null, nothingFound: true}))
+                    }
                 } catch (error) {
                     // set error data and disable loading state
                     console.error(error)
-                    setState(state => ({...state ,loading: false, error: true, result: error}))
+                    setState(state => ({...state ,loading: false, error: true, result: error, nothingFound: false}))
                 }
             }
         )()
@@ -44,6 +51,10 @@ const ResultsPage = () => {
                     <div className="spinner-border text-primary" role="status"/>
                     <span className="sr-only">Chargement...</span>
                 </div>}
+
+                {//display result items only if there's a result that isn't an error and if the page is not loading
+                    state.nothingFound && <p className={"text-center py-3"}>🤔 Nous n'avons rien trouvé qui ressemble à "{searchText}". Vérifiez l'orthographe ou changez de recherche.</p>
+                }
 
                 {//display result items only if there's a result that isn't an error and if the page is not loading
                     (state.result != null && !state.loading && !state.error) && <div className="container mt-3">
