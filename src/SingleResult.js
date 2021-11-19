@@ -1,7 +1,8 @@
 import {useParams} from "react-router-dom";
 import SearchForm from "./components/SearchForm";
-import {useEffect, useState} from "react";
+import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import {Loader} from "./components/Loader";
+import {onEnter} from "./components/ResultItem";
 const MONTHS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
 export const SingleResult = () => {
@@ -58,6 +59,7 @@ export const SingleResult = () => {
 }
 
 const ItemDetails = (props) => {
+    const blockRef = useRef()
     const {siren, siret, libelle_activite_principale, date_creation, nom_raison_sociale, libelle_nature_juridique_entreprise, geo_adresse} = props.details
 
     const formatedDate = () => {
@@ -66,9 +68,12 @@ const ItemDetails = (props) => {
             const day = date_creation.slice(6, 8)
             return `${day} ${MONTHS[(month-1)]} ${years}`
     }
+    useLayoutEffect(() => {
+        onEnter(blockRef.current)
+    })
 
     return (
-        <div className="item-details mt-3 h-100 bg-light p-3 rounded-3">
+        <div ref={blockRef} className="item-details mt-3 h-100 bg-light p-3 rounded-3">
             <div className="titles">
                 <h2 className={"item-name"}>{nom_raison_sociale}</h2>
                 <p className={"item-siren"}>{siren}</p>
